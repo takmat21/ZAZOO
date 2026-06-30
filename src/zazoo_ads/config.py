@@ -20,8 +20,23 @@ REGION_ENDPOINTS = {
     "FE": "https://advertising-api-fe.amazon.com",  # 日本を含む極東リージョン
 }
 
-# Login with Amazon (LWA) のトークンエンドポイント
-LWA_TOKEN_URL = "https://api.amazon.com/auth/o2/token"
+# Login with Amazon (LWA) のトークン交換エンドポイント（リージョン別）
+# 注意: アカウントの所属リージョンに合ったドメインを使わないと認証に失敗する。
+LWA_TOKEN_URLS = {
+    "NA": "https://api.amazon.com/auth/o2/token",
+    "EU": "https://api.amazon.co.uk/auth/o2/token",
+    "FE": "https://api.amazon.co.jp/auth/o2/token",  # 日本
+}
+
+# OAuth 認可（ユーザーがログイン・許可する）画面のエンドポイント（リージョン別）
+LWA_AUTH_URLS = {
+    "NA": "https://www.amazon.com/ap/oa",
+    "EU": "https://eu.account.amazon.com/ap/oa",
+    "FE": "https://apac.account.amazon.com/ap/oa",  # 日本・極東
+}
+
+# 後方互換のためのエイリアス（既定リージョン NA のトークン URL）
+LWA_TOKEN_URL = LWA_TOKEN_URLS["NA"]
 
 
 @dataclass
@@ -34,14 +49,28 @@ class ApiCredentials:
     profile_id: str
     region: str = "FE"
 
-    @property
-    def endpoint(self) -> str:
+    def _require_region(self) -> str:
         if self.region not in REGION_ENDPOINTS:
             raise ValueError(
                 f"未知のリージョン: {self.region}. "
                 f"利用可能: {', '.join(REGION_ENDPOINTS)}"
             )
-        return REGION_ENDPOINTS[self.region]
+        return self.region
+
+    @property
+    def endpoint(self) -> str:
+        """広告 API のエンドポイント（リージョン別）."""
+        return REGION_ENDPOINTS[self._require_region()]
+
+    @property
+    def lwa_token_url(self) -> str:
+        """LWA トークン交換エンドポイント（リージョン別）."""
+        return LWA_TOKEN_URLS[self._require_region()]
+
+    @property
+    def lwa_auth_url(self) -> str:
+        """OAuth 認可画面のエンドポイント（リージョン別）."""
+        return LWA_AUTH_URLS[self._require_region()]
 
     @classmethod
     def from_env(cls) -> "ApiCredentials":

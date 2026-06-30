@@ -73,6 +73,27 @@ cp config/rules.example.yaml config/rules.yaml
 > `.env` と `config/rules.yaml` は `.gitignore` 済み。認証情報は絶対に
 > コミットしないでください。
 
+#### 認証情報 (refresh_token / profile_id) の取得
+
+LWA セキュリティプロファイル作成後、対話的ヘルパーで `refresh_token` と
+`profile_id` を取得できます（リージョンに応じた正しい URL を自動使用）。
+
+```bash
+ADS_CLIENT_ID=【LWAのクライアントID】 \
+ADS_CLIENT_SECRET=【LWAのシークレット】 \
+ADS_REGION=FE \
+PYTHONPATH=src python examples/get_refresh_token.py
+```
+
+表示される認可 URL をブラウザで開いて「許可」し、リダイレクト先 URL を
+貼り付けると、`.env` に設定すべき値（`refresh_token` と日本の `profileId`）が
+出力されます。
+
+> ⚠️ この手順の前に、Amazon Ads API の利用申請 (Apply for API access) が
+> **承認され、LWA アプリに割り当て (Assign access) 済み**である必要があります。
+> 未割り当てだと認可画面でエラーになります。
+> 詳細は [`docs/API_SETUP.md`](docs/API_SETUP.md) を参照。
+
 ### 使い方
 
 ```bash

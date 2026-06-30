@@ -12,7 +12,7 @@ from typing import Optional
 
 import requests
 
-from ..config import LWA_TOKEN_URL, ApiCredentials
+from ..config import ApiCredentials
 
 logger = logging.getLogger("zazoo_ads")
 
@@ -47,7 +47,7 @@ class LwaTokenProvider:
     def _refresh(self) -> str:
         logger.debug("LWA アクセストークンを更新します")
         resp = self._session.post(
-            LWA_TOKEN_URL,
+            self._credentials.lwa_token_url,
             data={
                 "grant_type": "refresh_token",
                 "refresh_token": self._credentials.refresh_token,

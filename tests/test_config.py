@@ -31,6 +31,24 @@ def test_credentials_endpoint_fe():
     assert cred.endpoint.endswith("-fe.amazon.com")
 
 
+def test_credentials_lwa_urls_fe():
+    cred = ApiCredentials(
+        client_id="a", client_secret="b", refresh_token="c",
+        profile_id="d", region="FE",
+    )
+    # 日本(FE)は co.jp / apac ドメインでなければならない
+    assert cred.lwa_token_url == "https://api.amazon.co.jp/auth/o2/token"
+    assert cred.lwa_auth_url == "https://apac.account.amazon.com/ap/oa"
+
+
+def test_credentials_lwa_urls_na():
+    cred = ApiCredentials(
+        client_id="a", client_secret="b", refresh_token="c",
+        profile_id="d", region="NA",
+    )
+    assert cred.lwa_token_url == "https://api.amazon.com/auth/o2/token"
+
+
 def test_credentials_unknown_region():
     cred = ApiCredentials(
         client_id="a", client_secret="b", refresh_token="c",
