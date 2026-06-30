@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ZAZOO 広告ツール（ユーザー固有設定・ログ）
+config/rules.yaml
+logs/

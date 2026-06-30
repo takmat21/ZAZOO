@@ -1,0 +1,38 @@
+# ZAZOO Amazon 広告運用 自動化ルール（サンプル）
+# 値は ZAZOO ブランドの方針に合わせて調整してください。
+# このファイルをコピーして config/rules.yaml を作成し運用します。
+
+# --- 入札最適化 ---
+bid:
+  target_acos: 0.30        # 目標 ACoS（30%）。利益率に応じて設定
+  min_clicks: 10           # 判定に必要な最小クリック数（ノイズ除去）
+  bid_up_step: 0.10        # 引き上げ率 +10%
+  bid_down_step: 0.15      # 引き下げ率 -15%
+  max_bid: 200.0           # 入札上限（円）
+  min_bid: 10.0            # 入札下限（円）
+  zero_sale_clicks: 15     # 売上ゼロで強制引き下げとするクリック数
+
+# --- キーワード収集（検索語句 → キーワード化）---
+harvest:
+  min_orders: 2            # 収集対象とする最小注文数
+  max_acos: 0.30           # 収集対象とする最大 ACoS
+  default_match_type: EXACT
+  bid_multiplier: 1.0      # 実績 CPC に対する推奨入札の倍率
+
+# --- 除外キーワード ---
+negative:
+  min_clicks: 15           # 除外判定に必要な最小クリック数
+  max_orders: 0            # この注文数以下で除外候補
+  min_cost: 100.0          # この費用以上を浪費していれば除外候補（円）
+  default_match_type: EXACT
+
+# --- 予算ペーシング ---
+budget:
+  enabled: true
+  increase_when_acos_below: 0.20  # 好調時に増額する ACoS 閾値
+  increase_step: 0.20             # 増額率 +20%
+  decrease_when_acos_above: 0.50  # 不調時に減額する ACoS 閾値
+  decrease_step: 0.20             # 減額率 -20%
+  max_daily_budget: 50000.0       # 日予算上限（円）
+  min_daily_budget: 500.0         # 日予算下限（円）
+  min_cost: 500.0                 # 判定に必要な最小消化額（円）
